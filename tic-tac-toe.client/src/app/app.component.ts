@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { SignalrService } from './services/signalr.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent  {
+
+export class AppComponent implements OnInit  {
+ constructor(private signalR: SignalrService) { }
+
   board: string[] = Array(9).fill('');
   isGameOver = false;
   mode: 'pvp' | 'ai' = 'pvp';
@@ -15,17 +19,31 @@ export class AppComponent  {
   playerSymbol: 'X' | 'O' = 'X'; // Human is always 'X'
   aiSymbol: 'X' | 'O' = 'O';     // AI is always 'O'
 
+  ngOnInit(): void {
+    this.signalR.startConnection();
+    this.signalR.onMoveReceived.subscribe(({ index, player }) => {
+      if (!this.board[index] && !this.isGameOver) {
+        this.board[index] = player;
+        this.checkGameOver();
+        this.currentPlayer = player === 'X' ? 'O' : 'X';
+      }
+    });
+  }
+
   onMove(index: number) {
     if (this.board[index] || this.isGameOver) return;
 
     this.board[index] = this.currentPlayer;
     this.checkGameOver();
 
+    if (this.mode === 'pvp') {
+      this.signalR.sendMove(index, this.currentPlayer);
+      this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+    }
+
     if (this.mode === 'ai' && !this.isGameOver) {
       this.currentPlayer = 'O';
-      setTimeout(() => this.makeAIMove(), 300); // simulate delay
-    } else {
-      this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+      setTimeout(() => this.makeAIMove(), 300);
     }
   }
 

@@ -7,9 +7,12 @@ const PROXY_CONFIG = [
   {
     context: [
       "/weatherforecast",
+      "/gamehub/",
     ],
     target,
-    secure: false
+    secure: false,
+    ws: true,
+    logLevel: 'debug'
   }
 ]
 
