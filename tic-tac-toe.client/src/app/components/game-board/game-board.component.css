@@ -20,3 +20,9 @@
   color: red;
   transition: color 0.2s ease-in-out;
 }
+
+.cell.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -10,7 +10,9 @@ export class GameBoardComponent {
   @Input() cellSources: ('local' | 'remote')[] = Array(9).fill(null);
   @Input() currentPlayer: 'X' | 'O' = 'X';
   @Input() isGameOver: boolean = false;
+  @Input() isMyTurn: boolean = true;
   @Output() moveMade = new EventEmitter<number>();
+
 
   onCellClick(index: number): void {
     if (!this.board[index] && !this.isGameOver) {

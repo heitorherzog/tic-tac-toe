@@ -28,6 +28,10 @@ export class AppComponent implements OnInit  {
   isRoomOwner = false;
   roomFromUrl: string | null = null;
 
+  get isMyTurn(): boolean {
+    return this.mode === 'ai' || this.playerSymbol === this.currentPlayer;
+  }
+
 
   ngOnInit(): void {
     const urlParams = new URLSearchParams(window.location.search);
@@ -58,6 +62,11 @@ export class AppComponent implements OnInit  {
 
   onMove(index: number) {
     if (this.board[index] || this.isGameOver) return;
+
+    // Block move if not your turn(only applies in PvP)
+    if (this.mode === 'pvp' && this.playerSymbol !== this.currentPlayer) {
+      return;
+    }
 
     this.board[index] = this.currentPlayer;
     this.cellSources[index] = 'local';
