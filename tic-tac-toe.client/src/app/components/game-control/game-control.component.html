@@ -1,0 +1,9 @@
+<div class="controls">
+  <button (click)="onSelectMode('pvp')" [class.active]="selectedMode === 'pvp'">
+    🧑‍🤝‍🧑 Player vs Player
+  </button>
+  <button (click)="onSelectMode('ai')" [class.active]="selectedMode === 'ai'">
+    🤖 Play vs AI
+  </button>
+  <button (click)="onRestart()">🔄 Restart</button>
+</div>

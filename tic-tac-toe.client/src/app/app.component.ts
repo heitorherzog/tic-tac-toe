@@ -9,11 +9,32 @@ export class AppComponent  {
   board: string[] = Array(9).fill('');
   currentPlayer: 'X' | 'O' = 'X';
   isGameOver = false;
+  mode: 'pvp' | 'ai' = 'pvp';
 
   onMove(index: number) {
+    if (this.board[index] || this.isGameOver) return;
+
     this.board[index] = this.currentPlayer;
     this.checkGameOver();
-    this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+
+    if (this.mode === 'ai' && !this.isGameOver) {
+      this.currentPlayer = 'O';
+      setTimeout(() => this.makeAIMove(), 300); // simulate delay
+    } else {
+      this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+    }
+  }
+
+  makeAIMove() {
+    const available = this.board
+      .map((cell, i) => cell === '' ? i : -1)
+      .filter(i => i !== -1);
+    const randomIndex = available[Math.floor(Math.random() * available.length)];
+    if (randomIndex !== undefined) {
+      this.board[randomIndex] = 'O';
+      this.checkGameOver();
+      this.currentPlayer = 'X';
+    }
   }
 
   checkGameOver() {
@@ -34,6 +55,18 @@ export class AppComponent  {
        this.isGameOver = true;
     }
   }
+
+  onRestartGame() {
+    this.board = Array(9).fill('');
+    this.currentPlayer = 'X';
+    this.isGameOver = false;
+  }
+
+  onModeChange(mode: 'pvp' | 'ai') {
+    this.mode = mode;
+    this.onRestartGame();
+  }
+
 
 
   

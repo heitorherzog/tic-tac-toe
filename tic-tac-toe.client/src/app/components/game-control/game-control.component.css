@@ -1,0 +1,19 @@
+.controls {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+button {
+  margin: 0 5px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: 2px solid #000;
+  background-color: white;
+  transition: background-color 0.2s ease-in-out;
+}
+
+  button.active {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }

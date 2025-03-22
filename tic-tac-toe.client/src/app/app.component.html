@@ -1,3 +1,7 @@
+<app-game-control (restart)="onRestartGame()"
+                  (modeSelected)="onModeChange($event)">
+</app-game-control>
+
 <app-game-board [board]="board"
                 [currentPlayer]="currentPlayer"
                 [isGameOver]="isGameOver"
