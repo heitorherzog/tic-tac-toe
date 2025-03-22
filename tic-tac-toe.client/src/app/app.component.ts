@@ -7,11 +7,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent  {
   board: string[] = Array(9).fill('');
-  currentPlayer: 'X' | 'O' = 'X';
   isGameOver = false;
   mode: 'pvp' | 'ai' = 'pvp';
   winner: 'X' | 'O' | null = null;
   isDraw = false;
+  currentPlayer: 'X' | 'O' = 'X';
+  playerSymbol: 'X' | 'O' = 'X'; // Human is always 'X'
+  aiSymbol: 'X' | 'O' = 'O';     // AI is always 'O'
 
   onMove(index: number) {
     if (this.board[index] || this.isGameOver) return;
@@ -70,6 +72,8 @@ export class AppComponent  {
 
   onModeChange(mode: 'pvp' | 'ai') {
     this.mode = mode;
+    this.playerSymbol = 'X';
+    this.aiSymbol = 'O';
     this.onRestartGame();
   }
 

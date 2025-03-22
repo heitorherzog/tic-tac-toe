@@ -8,4 +8,6 @@ import { Component, Input } from '@angular/core';
 export class GameStatusComponent {
   @Input() winner: 'X' | 'O' | null = null;
   @Input() isDraw = false;
+  @Input() mode: 'pvp' | 'ai' = 'pvp';
+  @Input() playerSymbol: 'X' | 'O' = 'X';
 }
