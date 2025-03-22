@@ -23,16 +23,24 @@ namespace tic_tac_toe.Server.Hubs
                 });
 
             var playerSymbol = RoomPlayers[roomId].Count == 1 ? "X" : "O";
-
             await Clients.Caller.SendAsync("ReceivePlayerSymbol", playerSymbol);
 
             Console.WriteLine($"Client {Context.ConnectionId} joined room {roomId} as {playerSymbol}");
+
+            // Send room update to all players in the room
+            await Clients.Group(roomId).SendAsync("RoomPlayerCount", RoomPlayers[roomId].Count);
         }
 
         public async Task SendMove(string roomId, int index, string player)
         {
             await Clients.GroupExcept(roomId, Context.ConnectionId)
                          .SendAsync("ReceiveMove", index, player);
+        }
+
+        public Task<int> GetRoomPlayerCount(string roomId)
+        {
+            RoomPlayers.TryGetValue(roomId, out var list);
+            return Task.FromResult(list?.Count ?? 0);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)

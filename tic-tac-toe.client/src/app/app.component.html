@@ -1,18 +1,23 @@
+<!-- ROOM SELECTION UI -->
 <app-room-select *ngIf="showRoomSelector"
                  (joinOnlineGame)="onJoinOnline($event)"
                  (playOffline)="onPlayOffline()">
 </app-room-select>
 
-<div *ngIf="showWaitingOverlay" class="overlay">
+<!-- WAITING OVERLAY FOR PVP -->
+<div *ngIf="mode === 'pvp' && !canPlay && !showRoomSelector" class="overlay">
+  <h2>Room: {{ roomId }}</h2>
   <h2>Waiting for opponent...</h2>
 </div>
 
-<div *ngIf="!showRoomSelector && !showWaitingOverlay">
-  <app-game-control
-    [showModeToggle]="mode === 'pvp'"
-    (restart)="onRestartGame()"
-    (modeSelected)="onModeChange($event)"
-    (returnToMenu)="onReturnToMenu()">
+<!-- PVP GAME UI WHEN READY -->
+<div *ngIf="mode === 'pvp' && canPlay && !showRoomSelector">
+  <h3 class="room-label">Room: {{ roomId }}</h3>
+
+  <app-game-control [showModeToggle]="true"
+                    (restart)="onRestartGame()"
+                    (modeSelected)="onModeChange($event)"
+                    (returnToMenu)="onReturnToMenu()">
   </app-game-control>
 
   <app-game-status [winner]="winner"
@@ -29,5 +34,27 @@
                     (moveMade)="onMove($event)">
     </app-game-board>
   </div>
+</div>
 
+<!-- AI/OFFLINE MODE -->
+<div *ngIf="mode === 'ai' && !showRoomSelector">
+  <app-game-control [showModeToggle]="false"
+                    (restart)="onRestartGame()"
+                    (returnToMenu)="onReturnToMenu()">
+  </app-game-control>
+
+  <app-game-status [winner]="winner"
+                   [isDraw]="isDraw"
+                   [mode]="mode"
+                   [playerSymbol]="playerSymbol">
+  </app-game-status>
+
+  <div class="container">
+    <app-game-board [board]="board"
+                    [cellSources]="cellSources"
+                    [currentPlayer]="currentPlayer"
+                    [isGameOver]="isGameOver"
+                    (moveMade)="onMove($event)">
+    </app-game-board>
+  </div>
 </div>

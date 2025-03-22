@@ -6,10 +6,11 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class SignalrService {
-  private hubConnection!: signalR.HubConnection;
 
+  private hubConnection!: signalR.HubConnection;
   public onPlayerSymbol = new Subject<'X' | 'O'>();
   public onMoveReceived = new Subject<{ index: number, player: 'X' | 'O' }>();
+  public onRoomPlayerCount = new Subject<number>();
 
   public startConnection(): Promise<void> {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -27,6 +28,10 @@ export class SignalrService {
 
     this.hubConnection.on('ReceivePlayerSymbol', (symbol: 'X' | 'O') => {
       this.onPlayerSymbol.next(symbol);
+    });
+
+    this.hubConnection.on('RoomPlayerCount', (count: number) => {
+      this.onRoomPlayerCount.next(count);
     });
 
     return this.hubConnection

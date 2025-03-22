@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SignalrService } from './services/signalr.service';
+import { Subject } from '@microsoft/signalr';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,8 @@ export class AppComponent implements OnInit  {
   showRoomSelector = true;
   roomId = '';
   cellSources: ('local' | 'remote')[] = Array(9).fill(null);
+  roomPlayerCount = 0;
+  canPlay = false;
 
 
   ngOnInit(): void {
@@ -126,6 +129,11 @@ export class AppComponent implements OnInit  {
       this.currentPlayer = 'X';
       this.showRoomSelector = false;
       this.showWaitingOverlay = false;
+    });
+
+    this.signalR.onRoomPlayerCount.subscribe(count => {
+      this.roomPlayerCount = count;
+      this.canPlay = count === 2;
     });
 
     this.signalR.onMoveReceived.subscribe(({ index, player }) => {

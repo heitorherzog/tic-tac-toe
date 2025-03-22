@@ -1,0 +1,29 @@
+.room-container {
+  max-width: 400px;
+  margin: 100px auto;
+  text-align: center;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+input {
+  padding: 8px;
+  width: 180px;
+  font-size: 1rem;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.divider {
+  margin: 10px 0;
+  font-weight: bold;
+}
