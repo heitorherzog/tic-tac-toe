@@ -2,8 +2,13 @@
                   (modeSelected)="onModeChange($event)">
 </app-game-control>
 
-<app-game-board [board]="board"
-                [currentPlayer]="currentPlayer"
-                [isGameOver]="isGameOver"
-                (moveMade)="onMove($event)">
-</app-game-board>
+<div class="container">
+  <app-game-status [winner]="winner" [isDraw]="isDraw"></app-game-status>
+
+  <app-game-board [board]="board"
+                  [currentPlayer]="currentPlayer"
+                  [isGameOver]="isGameOver"
+                  (moveMade)="onMove($event)">
+  </app-game-board>
+
+</div>

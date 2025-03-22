@@ -10,6 +10,8 @@ export class AppComponent  {
   currentPlayer: 'X' | 'O' = 'X';
   isGameOver = false;
   mode: 'pvp' | 'ai' = 'pvp';
+  winner: 'X' | 'O' | null = null;
+  isDraw = false;
 
   onMove(index: number) {
     if (this.board[index] || this.isGameOver) return;
@@ -46,12 +48,14 @@ export class AppComponent  {
 
     for (let [a, b, c] of wins) {
       if (this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c]) {
+        this.winner = this.board[a] as 'X' | 'O';
         this.isGameOver = true;
         return;
       }
     }
 
     if (this.board.every(cell => cell)) {
+       this.isDraw = true;
        this.isGameOver = true;
     }
   }
@@ -60,6 +64,8 @@ export class AppComponent  {
     this.board = Array(9).fill('');
     this.currentPlayer = 'X';
     this.isGameOver = false;
+    this.winner = null;
+    this.isDraw = false;
   }
 
   onModeChange(mode: 'pvp' | 'ai') {
