@@ -26,3 +26,19 @@ table {
   font-weight: bold;
   font-size: 1.2rem;
 }
+
+.copy-btn {
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 6px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: 1px solid #000;
+  background-color: white;
+  transition: background-color 0.2s ease-in-out;
+}
+
+  .copy-btn:hover {
+    background-color: #f5f5f5;
+  }
+

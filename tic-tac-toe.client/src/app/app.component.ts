@@ -25,27 +25,36 @@ export class AppComponent implements OnInit  {
   cellSources: ('local' | 'remote')[] = Array(9).fill(null);
   roomPlayerCount = 0;
   canPlay = false;
+  isRoomOwner = false;
+  roomFromUrl: string | null = null;
 
 
   ngOnInit(): void {
-    this.showWaitingOverlay = true;
+    const urlParams = new URLSearchParams(window.location.search);
+    const room = urlParams.get('room');
+    if (room) {
+      this.roomFromUrl = room;
+    }
 
+    this.showWaitingOverlay = true;
     this.signalR.onPlayerSymbol.subscribe(symbol => {
       this.playerSymbol = symbol;
       this.currentPlayer = 'X'; // X always starts
       this.showRoomSelector = false;
       this.showWaitingOverlay = false; // hide when both players joined
+      this.isRoomOwner = symbol === 'X';  // you're the room creator
     });
 
     this.signalR.onMoveReceived.subscribe(({ index, player }) => {
       if (!this.board[index] && !this.isGameOver) {
-        this.board[index] = player;
-        this.cellSources[index] = 'remote';
-        this.checkGameOver();
-        this.currentPlayer = player === 'X' ? 'O' : 'X';
-      }
+          this.board[index] = player;
+          this.cellSources[index] = 'remote';
+          this.checkGameOver();
+          this.currentPlayer = player === 'X' ? 'O' : 'X';
+       }
     });
   }
+  
 
   onMove(index: number) {
     if (this.board[index] || this.isGameOver) return;
@@ -165,5 +174,13 @@ export class AppComponent implements OnInit  {
     this.roomId = '';
     this.playerSymbol = 'X';
   }
+
+  copyInviteLink() {
+    const url = `${window.location.origin}?room=${this.roomId}`;
+    navigator.clipboard.writeText(url)
+      .then(() => alert('Invite link copied! 🎉'))
+      .catch(() => alert('Failed to copy link'));
+  }
+
 
 }

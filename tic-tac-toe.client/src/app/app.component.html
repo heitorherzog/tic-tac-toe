@@ -1,45 +1,30 @@
 <!-- ROOM SELECTION UI -->
 <app-room-select *ngIf="showRoomSelector"
+                 [roomPreset]="roomFromUrl"
                  (joinOnlineGame)="onJoinOnline($event)"
                  (playOffline)="onPlayOffline()">
 </app-room-select>
 
-<!-- WAITING OVERLAY FOR PVP -->
-<div *ngIf="mode === 'pvp' && !canPlay && !showRoomSelector" class="overlay">
-  <h2>Room: {{ roomId }}</h2>
-  <h2>Waiting for opponent...</h2>
+<!-- WAITING ROOM INFO (shows immediately after joining a room) -->
+<div *ngIf="mode === 'pvp' && !showRoomSelector">
+  <h3 class="room-label">Room: {{ roomId }}</h3>
+
+  <!-- Show only if this player created the room (player X) -->
+  <button *ngIf="isRoomOwner" class="copy-btn" (click)="copyInviteLink()">
+    📋 Copy Invite Link
+  </button>
+
+  <!-- Show this only if second player hasn't joined yet -->
+  <div *ngIf="!canPlay" class="overlay">
+    <h2>Waiting for opponent...</h2>
+  </div>
 </div>
 
 <!-- PVP GAME UI WHEN READY -->
 <div *ngIf="mode === 'pvp' && canPlay && !showRoomSelector">
-  <h3 class="room-label">Room: {{ roomId }}</h3>
-
   <app-game-control [showModeToggle]="true"
                     (restart)="onRestartGame()"
                     (modeSelected)="onModeChange($event)"
-                    (returnToMenu)="onReturnToMenu()">
-  </app-game-control>
-
-  <app-game-status [winner]="winner"
-                   [isDraw]="isDraw"
-                   [mode]="mode"
-                   [playerSymbol]="playerSymbol">
-  </app-game-status>
-
-  <div class="container">
-    <app-game-board [board]="board"
-                    [cellSources]="cellSources"
-                    [currentPlayer]="currentPlayer"
-                    [isGameOver]="isGameOver"
-                    (moveMade)="onMove($event)">
-    </app-game-board>
-  </div>
-</div>
-
-<!-- AI/OFFLINE MODE -->
-<div *ngIf="mode === 'ai' && !showRoomSelector">
-  <app-game-control [showModeToggle]="false"
-                    (restart)="onRestartGame()"
                     (returnToMenu)="onReturnToMenu()">
   </app-game-control>
 
