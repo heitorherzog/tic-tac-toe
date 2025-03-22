@@ -1,14 +1,33 @@
-<app-game-control (restart)="onRestartGame()"
-                  (modeSelected)="onModeChange($event)">
-</app-game-control>
+<app-room-select *ngIf="showRoomSelector"
+                 (joinOnlineGame)="onJoinOnline($event)"
+                 (playOffline)="onPlayOffline()">
+</app-room-select>
 
-<div class="container">
-  <app-game-status [winner]="winner" [isDraw]="isDraw" [mode]="mode" [playerSymbol]="playerSymbol"></app-game-status>
+<div *ngIf="showWaitingOverlay" class="overlay">
+  <h2>Waiting for opponent...</h2>
+</div>
 
-  <app-game-board [board]="board"
-                  [currentPlayer]="currentPlayer"
-                  [isGameOver]="isGameOver"
-                  (moveMade)="onMove($event)">
-  </app-game-board>
+<div *ngIf="!showRoomSelector && !showWaitingOverlay">
+  <app-game-control
+    [showModeToggle]="mode === 'pvp'"
+    (restart)="onRestartGame()"
+    (modeSelected)="onModeChange($event)"
+    (returnToMenu)="onReturnToMenu()">
+  </app-game-control>
+
+  <app-game-status [winner]="winner"
+                   [isDraw]="isDraw"
+                   [mode]="mode"
+                   [playerSymbol]="playerSymbol">
+  </app-game-status>
+
+  <div class="container">
+    <app-game-board [board]="board"
+                    [cellSources]="cellSources"
+                    [currentPlayer]="currentPlayer"
+                    [isGameOver]="isGameOver"
+                    (moveMade)="onMove($event)">
+    </app-game-board>
+  </div>
 
 </div>

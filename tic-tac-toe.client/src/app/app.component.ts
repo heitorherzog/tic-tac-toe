@@ -12,18 +12,32 @@ export class AppComponent implements OnInit  {
 
   board: string[] = Array(9).fill('');
   isGameOver = false;
-  mode: 'pvp' | 'ai' = 'pvp';
+  mode: 'pvp' | 'ai' = 'ai';
   winner: 'X' | 'O' | null = null;
   isDraw = false;
   currentPlayer: 'X' | 'O' = 'X';
   playerSymbol: 'X' | 'O' = 'X'; // Human is always 'X'
   aiSymbol: 'X' | 'O' = 'O';     // AI is always 'O'
+  showWaitingOverlay = false;
+  showRoomSelector = true;
+  roomId = '';
+  cellSources: ('local' | 'remote')[] = Array(9).fill(null);
+
 
   ngOnInit(): void {
-    this.signalR.startConnection();
+    this.showWaitingOverlay = true;
+
+    this.signalR.onPlayerSymbol.subscribe(symbol => {
+      this.playerSymbol = symbol;
+      this.currentPlayer = 'X'; // X always starts
+      this.showRoomSelector = false;
+      this.showWaitingOverlay = false; // hide when both players joined
+    });
+
     this.signalR.onMoveReceived.subscribe(({ index, player }) => {
       if (!this.board[index] && !this.isGameOver) {
         this.board[index] = player;
+        this.cellSources[index] = 'remote';
         this.checkGameOver();
         this.currentPlayer = player === 'X' ? 'O' : 'X';
       }
@@ -34,17 +48,19 @@ export class AppComponent implements OnInit  {
     if (this.board[index] || this.isGameOver) return;
 
     this.board[index] = this.currentPlayer;
+    this.cellSources[index] = 'local';
     this.checkGameOver();
-
-    if (this.mode === 'pvp') {
-      this.signalR.sendMove(index, this.currentPlayer);
-      this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-    }
 
     if (this.mode === 'ai' && !this.isGameOver) {
       this.currentPlayer = 'O';
       setTimeout(() => this.makeAIMove(), 300);
     }
+
+    if (this.mode === 'pvp') {
+      this.signalR.sendMoveToRoom(this.roomId, index, this.currentPlayer);
+      this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+    }
+
   }
 
   makeAIMove() {
@@ -70,11 +86,13 @@ export class AppComponent implements OnInit  {
       if (this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c]) {
         this.winner = this.board[a] as 'X' | 'O';
         this.isGameOver = true;
+        this.isDraw = false;
         return;
       }
     }
 
     if (this.board.every(cell => cell)) {
+      this.winner = null; 
        this.isDraw = true;
        this.isGameOver = true;
     }
@@ -95,7 +113,49 @@ export class AppComponent implements OnInit  {
     this.onRestartGame();
   }
 
+  async onJoinOnline(roomId: string) {
+    this.roomId = roomId;
+    this.showWaitingOverlay = true;
+
+    await this.signalR.startConnection(); 
+    this.signalR.joinRoom(roomId);
+
+    this.signalR.onPlayerSymbol.subscribe(symbol => {
+      this.playerSymbol = symbol;
+      this.mode = 'pvp';
+      this.currentPlayer = 'X';
+      this.showRoomSelector = false;
+      this.showWaitingOverlay = false;
+    });
+
+    this.signalR.onMoveReceived.subscribe(({ index, player }) => {
+      this.board[index] = player;
+      this.checkGameOver();
+      this.currentPlayer = player === 'X' ? 'O' : 'X';
+    });
+  }
 
 
-  
+  onPlayOffline() {
+    this.showRoomSelector = false;
+    this.showWaitingOverlay = false;
+    this.mode = 'ai';
+    this.playerSymbol = 'X';
+    this.currentPlayer = 'X';
+    this.onRestartGame();
+  }
+
+  onReturnToMenu() {
+    this.showRoomSelector = true;
+    this.showWaitingOverlay = false;
+    this.board = Array(9).fill('');
+    this.currentPlayer = 'X';
+    this.isGameOver = false;
+    this.winner = null;
+    this.isDraw = false;
+    this.mode = 'ai'; 
+    this.roomId = '';
+    this.playerSymbol = 'X';
+  }
+
 }

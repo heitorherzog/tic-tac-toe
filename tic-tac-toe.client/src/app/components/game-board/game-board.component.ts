@@ -7,6 +7,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class GameBoardComponent {
   @Input() board: string[] = Array(9).fill('');
+  @Input() cellSources: ('local' | 'remote')[] = Array(9).fill(null);
   @Input() currentPlayer: 'X' | 'O' = 'X';
   @Input() isGameOver: boolean = false;
   @Output() moveMade = new EventEmitter<number>();

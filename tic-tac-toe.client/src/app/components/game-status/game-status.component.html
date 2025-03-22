@@ -1,7 +1,12 @@
-<div *ngIf="winner || isDraw" class="status">
+<div class="status">
+  <!-- PvP Winner -->
   <h2 *ngIf="winner && mode === 'pvp'">{{ winner }} wins! 🎉</h2>
+
+  <!-- AI Winner -->
   <h2 *ngIf="winner && mode === 'ai'">
     {{ winner === playerSymbol ? 'You win! 🎉' : 'AI wins! 🤖' }}
   </h2>
-  <h2 *ngIf="isDraw">It’s a draw! 🤝</h2>
+
+  <!-- Draw -->
+  <h2 *ngIf="!winner && isDraw">It’s a draw! 🤝</h2>
 </div>

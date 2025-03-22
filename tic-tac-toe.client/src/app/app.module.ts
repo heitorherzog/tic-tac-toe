@@ -1,21 +1,24 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'; 
 
 import { AppComponent } from './app.component';
 import { GameBoardComponent } from './components/game-board/game-board.component';
 import { GameControlComponent } from './components/game-control/game-control.component';
 import { GameStatusComponent } from './components/game-status/game-status.component';
+import { RoomSelectComponent } from './components/room-select/room-select.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GameBoardComponent,
     GameControlComponent,
-    GameStatusComponent
+    GameStatusComponent,
+    RoomSelectComponent
   ],
   imports: [
-    BrowserModule, HttpClientModule
+    BrowserModule, HttpClientModule, FormsModule 
   ],
   providers: [],
   bootstrap: [AppComponent]

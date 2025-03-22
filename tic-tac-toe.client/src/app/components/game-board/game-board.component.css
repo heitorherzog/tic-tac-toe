@@ -15,3 +15,8 @@
   cursor: pointer;
   user-select: none;
 }
+
+.remote-move {
+  color: red;
+  transition: color 0.2s ease-in-out;
+}

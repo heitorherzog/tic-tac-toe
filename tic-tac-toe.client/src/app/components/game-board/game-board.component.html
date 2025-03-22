@@ -1,7 +1,10 @@
 <div class="board">
   <div class="cell"
        *ngFor="let cell of board; let i = index"
-       (click)="onCellClick(i)">
+       (click)="onCellClick(i)"
+       [ngClass]="{
+    'remote-move': cellSources[i] === 'remote'
+  }">
     {{ cell }}
   </div>
 </div>

@@ -8,36 +8,56 @@ import { Subject } from 'rxjs';
 export class SignalrService {
   private hubConnection!: signalR.HubConnection;
 
-  // Emit when a move is received
+  public onPlayerSymbol = new Subject<'X' | 'O'>();
   public onMoveReceived = new Subject<{ index: number, player: 'X' | 'O' }>();
 
-  public startConnection(): void {
-
+  public startConnection(): Promise<void> {
     this.hubConnection = new signalR.HubConnectionBuilder()
-
-      // TODO: running both projects from vs studio (F5) it needs to pass a hard code url
+    // TODO: have to pass a hardcoded url if wants to run inside visual studio hitting (F5)
       .withUrl('https://localhost:7004/gamehub', {
         withCredentials: true
       })
-
-      // .withUrl('/gamehub')
+      // withUrl(gamehub)
       .withAutomaticReconnect()
       .build();
-
-    this.hubConnection
-      .start()
-      .then(() => console.log('SignalR Connected'))
-      .catch(err => console.log('Error while starting connection: ' + err));
 
     this.hubConnection.on('ReceiveMove', (index: number, player: 'X' | 'O') => {
       this.onMoveReceived.next({ index, player });
     });
+
+    this.hubConnection.on('ReceivePlayerSymbol', (symbol: 'X' | 'O') => {
+      this.onPlayerSymbol.next(symbol);
+    });
+
+    return this.hubConnection
+      .start()
+      .then(() => console.log('SignalR Connected'))
+      .catch(err => console.error('SignalR Connection Error:', err));
   }
 
-  public sendMove(index: number, player: 'X' | 'O'): void {
+  public joinRoom(roomId: string): void {
     if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
-      this.hubConnection.invoke('SendMove', index, player)
-        .catch(err => console.error(err));
+      this.hubConnection.invoke('JoinRoom', roomId)
+        .catch(err => console.error('JoinRoom error:', err));
+    } else {
+      console.warn('Cannot join room: connection not ready');
+    }
+  }
+
+  public sendMoveToRoom(roomId: string, index: number, player: 'X' | 'O') {
+    if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
+      this.hubConnection.invoke('SendMove', roomId, index, player)
+        .catch(err => console.error('SendMove error:', err));
+    } else {
+      console.warn('Cannot send move: not connected');
+    }
+  }
+
+  public stopConnection(): void {
+    if (this.hubConnection) {
+      this.hubConnection.stop().then(() => {
+        console.log('SignalR connection stopped.');
+      });
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 
 @Component({
   selector: 'app-game-control',
@@ -6,8 +6,10 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./game-control.component.css']
 })
 export class GameControlComponent {
+  @Input() showModeToggle = true;
   @Output() restart = new EventEmitter<void>();
   @Output() modeSelected = new EventEmitter<'pvp' | 'ai'>();
+  @Output() returnToMenu = new EventEmitter<void>();
 
   selectedMode: 'pvp' | 'ai' = 'pvp';
 
