@@ -3,7 +3,7 @@
        *ngFor="let cell of board; let i = index"
        (click)="onCellClick(i)"
        [ngClass]="{
-      'remote-move': cellSources[i] === 'remote',
+      'remote-move': cellSources[i] === REMOTE,
       'disabled': !isMyTurn || board[i]
     }">
     {{ cell }}

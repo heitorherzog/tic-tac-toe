@@ -1,9 +1,9 @@
 <div class="controls">
   <ng-container *ngIf="showModeToggle">
-    <button (click)="onSelectMode('pvp')" [class.active]="selectedMode === 'pvp'">
+    <button (click)="onSelectMode(MODE_PVP)" [class.active]="selectedMode === MODE_PVP">
       🧑‍🤝‍🧑 Player vs Player
     </button>
-    <button (click)="onSelectMode('ai')" [class.active]="selectedMode === 'ai'">
+    <button (click)="onSelectMode(MODE_PVP)" [class.active]="selectedMode === MODE_AI">
       🤖 Play vs AI
     </button>
   </ng-container>

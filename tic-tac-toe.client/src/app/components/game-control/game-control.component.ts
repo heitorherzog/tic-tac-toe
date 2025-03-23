@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { GameMode, MODE_AI, MODE_PVP } from '../../game.constants';
 
 @Component({
   selector: 'app-game-control',
@@ -8,12 +9,15 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
 export class GameControlComponent {
   @Input() showModeToggle = true;
   @Output() restart = new EventEmitter<void>();
-  @Output() modeSelected = new EventEmitter<'pvp' | 'ai'>();
+  @Output() modeSelected = new EventEmitter <GameMode>();
   @Output() returnToMenu = new EventEmitter<void>();
 
-  selectedMode: 'pvp' | 'ai' = 'pvp';
+  readonly MODE_PVP = MODE_PVP;
+  readonly MODE_AI = MODE_AI;
 
-  onSelectMode(mode: 'pvp' | 'ai') {
+  selectedMode: GameMode = MODE_PVP;
+
+  onSelectMode(mode: GameMode) {
     this.selectedMode = mode;
     this.modeSelected.emit(mode);
     this.restart.emit(); 

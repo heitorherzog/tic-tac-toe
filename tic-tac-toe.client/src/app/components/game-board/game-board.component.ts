@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CellSource, SOURCE_REMOTE } from '../../game.constants';
 
 @Component({
   selector: 'app-game-board',
@@ -7,15 +8,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class GameBoardComponent {
   @Input() board: string[] = Array(9).fill('');
-  @Input() cellSources: ('local' | 'remote')[] = Array(9).fill(null);
-  @Input() currentPlayer: 'X' | 'O' = 'X';
+  @Input() cellSources: (CellSource | null)[] = Array(9).fill(null);
   @Input() isGameOver: boolean = false;
   @Input() isMyTurn: boolean = true;
   @Output() moveMade = new EventEmitter<number>();
 
+  readonly REMOTE = SOURCE_REMOTE;
 
   onCellClick(index: number): void {
-    if (!this.board[index] && !this.isGameOver) {
+    if (!this.board[index] && !this.isGameOver && this.isMyTurn) {
       this.moveMade.emit(index);
     }
   }
