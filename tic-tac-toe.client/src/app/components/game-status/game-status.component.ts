@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { GameMode, PlayerSymbol } from '../../game.constants';
 
 @Component({
   selector: 'app-game-status',
@@ -6,8 +7,8 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./game-status.component.css']
 })
 export class GameStatusComponent {
-  @Input() winner: 'X' | 'O' | null = null;
-  @Input() isDraw = false;
-  @Input() mode: 'pvp' | 'ai' = 'pvp';
-  @Input() playerSymbol: 'X' | 'O' = 'X';
+  @Input() winner: PlayerSymbol | null  = null;
+  @Input() isDraw: boolean  = false;
+  @Input() mode: GameMode  = 'pvp';
+  @Input() playerSymbol:PlayerSymbol  = 'X';
 }

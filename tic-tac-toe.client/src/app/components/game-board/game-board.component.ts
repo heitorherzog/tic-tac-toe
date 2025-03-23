@@ -7,10 +7,10 @@ import { CellSource, SOURCE_REMOTE } from '../../game.constants';
   styleUrls: ['./game-board.component.css']
 })
 export class GameBoardComponent {
-  @Input() board: string[] = Array(9).fill('');
-  @Input() cellSources: (CellSource | null)[] = Array(9).fill(null);
-  @Input() isGameOver: boolean = false;
-  @Input() isMyTurn: boolean = true;
+  @Input() board: string[]  = Array(9).fill('');
+  @Input() cellSources: (CellSource  )[] = Array(9).fill(null);
+  @Input() isGameOver: boolean  = false;
+  @Input() isMyTurn: boolean  = true;
   @Output() moveMade = new EventEmitter<number>();
 
   readonly REMOTE = SOURCE_REMOTE;

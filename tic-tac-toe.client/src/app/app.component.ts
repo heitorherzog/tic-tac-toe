@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
   readonly MODE_PVP = MODE_PVP;
   readonly MODE_AI = MODE_AI;
 
+  // for handling null
   vm$ = combineLatest([
     this.state.board$,
     this.state.cellSources$,
@@ -40,11 +41,11 @@ export class AppComponent implements OnInit {
       board,
       cellSources,
       currentPlayer,
-      isGameOver: isGameOver ?? false,
-      winner: winner ?? null,
-      isDraw: isDraw ?? false,
-      mode: mode ?? MODE_AI,
-      playerSymbol: playerSymbol ?? PLAYER_X,
+      isGameOver,
+      winner,
+      isDraw,
+      mode,
+      playerSymbol
     }))
   );
 
