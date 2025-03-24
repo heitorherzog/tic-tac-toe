@@ -10,5 +10,5 @@ export class GameStatusComponent {
   @Input() winner: PlayerSymbol | null  = null;
   @Input() isDraw: boolean  = false;
   @Input() mode: GameMode  = 'pvp';
-  @Input() playerSymbol:PlayerSymbol  = 'X';
+  @Input() playerSymbol:PlayerSymbol  = 'x';
 }

@@ -1,3 +1,7 @@
+using Employees.Maintenance.Api.Extensions;
+using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using tic_tac_toe.Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +13,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+var connection = builder.Configuration.GetConnectionString("Postgres");
+builder.Services.AddEntityFramework(connection);
 
 // TODO: if the frontEnd dosent work using the proxy
 builder.Services.AddCors(options =>
@@ -23,6 +33,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.ExecuteMigrations<LeaderboardDbContext>();
 app.UseCors();
 app.UseDefaultFiles();
 app.UseStaticFiles();

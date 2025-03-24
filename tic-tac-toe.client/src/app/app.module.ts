@@ -8,6 +8,7 @@ import { GameBoardComponent } from './components/game-board/game-board.component
 import { GameControlComponent } from './components/game-control/game-control.component';
 import { GameStatusComponent } from './components/game-status/game-status.component';
 import { RoomSelectComponent } from './components/room-select/room-select.component';
+import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { RoomSelectComponent } from './components/room-select/room-select.compon
     GameBoardComponent,
     GameControlComponent,
     GameStatusComponent,
-    RoomSelectComponent
+    RoomSelectComponent,
+    LeaderboardComponent
   ],
   imports: [
     BrowserModule, HttpClientModule, FormsModule 

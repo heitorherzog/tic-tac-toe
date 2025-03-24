@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { Subject } from 'rxjs';
+import { PlayerSymbol } from '../game.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,8 @@ import { Subject } from 'rxjs';
 export class SignalrService {
 
   private hubConnection!: signalR.HubConnection;
-  public onPlayerSymbol = new Subject<'X' | 'O'>();
-  public onMoveReceived = new Subject<{ index: number, player: 'X' | 'O' }>();
+  public onPlayerSymbol = new Subject<PlayerSymbol>();
+  public onMoveReceived = new Subject<{ index: number, player: PlayerSymbol }>();
   public onRoomPlayerCount = new Subject<number>();
 
   public startConnection(): Promise<void> {
@@ -22,11 +23,11 @@ export class SignalrService {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.on('ReceiveMove', (index: number, player: 'X' | 'O') => {
+    this.hubConnection.on('ReceiveMove', (index: number, player: PlayerSymbol) => {
       this.onMoveReceived.next({ index, player });
     });
 
-    this.hubConnection.on('ReceivePlayerSymbol', (symbol: 'X' | 'O') => {
+    this.hubConnection.on('ReceivePlayerSymbol', (symbol: PlayerSymbol) => {
       this.onPlayerSymbol.next(symbol);
     });
 
@@ -49,7 +50,7 @@ export class SignalrService {
     }
   }
 
-  public sendMoveToRoom(roomId: string, index: number, player: 'X' | 'O') {
+  public sendMoveToRoom(roomId: string, index: number, player: PlayerSymbol) {
     if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
       this.hubConnection.invoke('SendMove', roomId, index, player)
         .catch(err => console.error('SendMove error:', err));

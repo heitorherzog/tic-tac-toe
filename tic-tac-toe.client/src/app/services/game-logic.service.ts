@@ -8,15 +8,22 @@ import {
   MODE_PVP,
   SOURCE_LOCAL,
   SOURCE_REMOTE,
-  ROOM_QUERY_PARAM
+  ROOM_QUERY_PARAM,
 } from '../game.constants';
-
+import { LeaderboardService } from './leaderboard.service';
+import { retryWhen } from 'rxjs/internal/operators/retryWhen';
+import { delay } from 'rxjs/internal/operators/delay';
+import { take } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class GameLogicService {
-  constructor(private state: GameStateService) { }
+  constructor(private state: GameStateService, private leaderboardService:LeaderboardService) { }
 
   initializeGame(): void {
+
+   this.getLeaderboard();
+
+
     const urlParams = new URLSearchParams(window.location.search);
     const roomFromUrl = urlParams.get(ROOM_QUERY_PARAM);
 
@@ -122,9 +129,13 @@ export class GameLogicService {
 
     for (const [a, b, c] of wins) {
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        this.state.winner$.next(board[a] as PlayerSymbol);
+        const winner = board[a] as PlayerSymbol;
+
+        this.state.winner$.next(winner);
         this.state.isGameOver$.next(true);
         this.state.isDraw$.next(false);
+
+        this.updateLeaderboard(winner);
         return;
       }
     }
@@ -133,6 +144,72 @@ export class GameLogicService {
       this.state.winner$.next(null);
       this.state.isDraw$.next(true);
       this.state.isGameOver$.next(true);
+
+      this.updateLeaderboard(null); // null means draw
     }
   }
+
+  private updateLeaderboard(winner: PlayerSymbol | null): void {
+    const leaderboard = { ...this.state.leaderboard$.value };
+
+    if (winner === null) {
+      leaderboard.draw = (leaderboard.draw|| 0) + 1;
+    } else if (this.state.mode$.value === MODE_AI && winner === PLAYER_O) {
+      leaderboard.ai = (leaderboard.ai || 0) + 1;
+    } else {
+      leaderboard[winner] = (leaderboard[winner] || 0) + 1;
+    }
+
+    leaderboard.gamesPlayed = (leaderboard.gamesPlayed || 0) + 1;
+    this.state.leaderboard$.next(leaderboard);
+    this.saveLeaderboard();
+  }
+
+
+  getLeaderboard() {
+    this.leaderboardService.getLeaderboard()
+      .pipe(
+        retryWhen(errors =>
+          errors.pipe(
+            delay(2000), // wait 2s before retry
+            take(5)      // retry up to 5 times
+          )
+        )
+      )
+      .subscribe({
+        next: lb => this.state.leaderboard$.next(lb),
+        error: err => {
+          console.error('❌ Failed to load leaderboard after retries', err);
+          // so the player / user knows that something is off
+          // but a UI feedback should be implemented / required
+          this.state.leaderboard$.next({
+            x: -1,
+            o: -1,
+            ai: -1,
+            draw: -1,
+            gamesPlayed: -1
+          });
+        }
+      });
+  }
+
+  saveLeaderboard() {
+    const updated = this.state.leaderboard$.value;
+
+    this.leaderboardService.saveLeaderboard(updated)
+      .pipe(
+        retryWhen(errors =>
+          errors.pipe(
+            delay(1000), // Wait 1s before retrying
+            take(5)      // Retry up to 5 times
+          )
+        )
+      )
+      .subscribe({
+        next: () => console.log('Leaderboard saved successfully'),
+        error: err => console.error('❌ Failed to save leaderboard after retries:', err)
+      });
+  }
+
+
 }

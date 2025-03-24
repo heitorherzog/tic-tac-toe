@@ -6,6 +6,6 @@
       'remote-move': cellSources[i] === REMOTE,
       'disabled': !isMyTurn || board[i]
     }">
-    {{ cell }}
+    {{ cell | uppercase  }}
   </div>
 </div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { GameMode, PlayerSymbol, PLAYER_X, MODE_AI, CellSource } from '../game.constants';
+import { GameMode, PlayerSymbol, PLAYER_X, MODE_AI, CellSource, Leaderboard } from '../game.constants';
 import { SignalrService } from './signalr.service';
 
 @Injectable({ providedIn: 'root' })
@@ -20,6 +20,14 @@ export class GameStateService {
   isRoomOwner$ = new BehaviorSubject<boolean>(false);
   showRoomSelector$ = new BehaviorSubject<boolean>(true);
   showWaitingOverlay$ = new BehaviorSubject<boolean>(false);
+  leaderboard$ = new BehaviorSubject<Leaderboard>({
+    x: 0,
+    o: 0,
+    ai: 0,
+    draw: 0,
+    gamesPlayed: 0
+  });
+
 
   resetGame(): void {
     this.board$.next(Array(9).fill(''));

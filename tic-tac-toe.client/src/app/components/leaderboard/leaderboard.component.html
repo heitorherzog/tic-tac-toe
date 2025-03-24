@@ -1,0 +1,9 @@
+<h2>🏆 Leaderboard</h2>
+<p>Total games played: {{ (leaderboard$ | async)?.gamesPlayed }}</p>
+
+<ul *ngIf="leaderboard$ | async as lb">
+  <li>Player X Wins: {{ lb.x }}</li>
+  <li>Player O Wins: {{ lb.o }}</li>
+  <li>AI Wins: {{ lb.ai }}</li>
+  <li>Draws: {{ lb.draw }}</li>
+</ul>
